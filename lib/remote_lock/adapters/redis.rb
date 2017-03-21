@@ -3,6 +3,20 @@ require 'remote_lock/adapters/base'
 module RemoteLock::Adapters
   class Redis < Base
 
+    def incr(key, expires_in_seconds)
+      r = @connection.incr(key) until(r and r.to_i > 0)
+      @connection.expire(key, expires_in_seconds)
+    end
+
+    def decr(key)
+      @connection.decr(key)
+    end
+
+    def is_positive?(key)
+      r = @connection.get(key)
+      (r and r.to_i > 0)
+    end
+
     def store(key, expires_in_seconds)
       # The previous implementation used SETNX and EXPIRE in sequence to set the
       # lock. in case a previous client failed between SETNX and EXPIRE below,

@@ -7,6 +7,18 @@ module RemoteLock::Adapters
       @connection = connection
     end
 
+    def incr(key, options = {})
+      raise NotImplementedError
+    end
+
+    def decr(key, options = {})
+      raise NotImplementedError
+    end
+
+    def is_positive?(key, options = {})
+      raise NotImplementedError
+    end
+
     def store(key, options = {})
       raise NotImplementedError
     end
@@ -22,7 +34,10 @@ module RemoteLock::Adapters
     def self.valid?(adapter)
       adapter.respond_to?(:store) &&
         adapter.respond_to?(:has_key?) &&
-        adapter.respond_to?(:delete)
+        adapter.respond_to?(:delete) &&
+        adapter.respond_to?(:incr) &&
+        adapter.respond_to?(:decr) &&
+        adapter.respond_to?(:is_positive?)
     end
 
     private
